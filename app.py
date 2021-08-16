@@ -25,7 +25,7 @@ def analyze():
         return {'error': data['error']}, 404
 
     players = analysis.game_summary(game_id, data)
-    return {'status': players}, 200
+    return {'players': players}, 200
 
 if __name__ == '__main__':
     # This is used when running locally only.
