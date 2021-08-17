@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 
 import files_service
 import analysis
+import interpretation
 
 app = Flask(__name__)
 CORS(app)
@@ -25,7 +26,8 @@ def analyze():
         return {'error': data['error']}, 404
 
     players = analysis.game_summary(game_id, data)
-    return {'players': players}, 200
+    interpretation_result = interpretation.get_build_order(players)
+    return {'players': interpretation_result}, 200
 
 if __name__ == '__main__':
     # This is used when running locally only.
