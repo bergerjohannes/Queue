@@ -24,7 +24,8 @@ def game_summary(game_id, data):
                                       'user_id': players_data[index]['user_id'],
                                       'buildings': {},
                                       'tech': {},
-                                      'units': {}}
+                                      'units': {},
+                                      'age_up_times': []}
 
         with zip_ref.open(file_name) as data:
             header.parse_stream(data)
@@ -65,8 +66,11 @@ def game_summary(game_id, data):
                             technology_id = x[1][1]['technology_id']
                             players = document_action('tech', technology_id, ingame_time, players, player_id)
                     elif x[0].name == 'CHAT':
-                        dict = ast.literal_eval(x[1].decode('UTF-8'))
-                        print(dict['messageAGP'])
+                        message = ast.literal_eval(x[1].decode('UTF-8'))['messageAGP']
+                        for index in range(len(players)):
+                            player = players[index + 1]
+                            if knowledge.chat_indicates_age_up(message, player['name']):
+                                players[index + 1]['age_up_times'].append(ingame_time)
                     if x[0].name == 'ACTION':
                         counter += 1
                 except EOFError:

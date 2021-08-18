@@ -1,4 +1,5 @@
 import math
+import datetime
 
 def get_times_for_first_and_second_creation_of(type, id, data):
     first = math.inf
@@ -29,6 +30,7 @@ def get_build_order(players):
         player_civ = player['civilization_name']
         player_id = player['user_id']
         winner = player['winner']
+        age_up_times = player['age_up_times']
 
         first_house, second_house = get_times_for_first_and_second_creation_of('buildings', 70, player)
         first_barracks, second_barracks = get_times_for_first_and_second_creation_of('buildings', 12, player)
@@ -112,7 +114,14 @@ def get_build_order(players):
         elif first_market < castle_age_clicked and first_blacksmith < castle_age_clicked and first_stable > imperial_age_clicked and first_range > imperial_age_clicked:
             build += 'Fast Imperial'
 
-        game_analysis[player_number] = {'name': player_name, 'id': player_id, 'winner': winner, 'civilization': player_civ,
-                    'build': build}
+        game_analysis[player_number] = {'name': player_name, 'id': player_id, 'winner': winner, 'civ': player_civ,
+                    'build': build, 'age_up_times': {}}
+
+        if 1 <= len(age_up_times):
+            game_analysis[player_number]['age_up_times']['feudal'] = str(datetime.timedelta(milliseconds=age_up_times[0]))
+        if 2 <= len(age_up_times):
+            game_analysis[player_number]['age_up_times']['castle'] = str(datetime.timedelta(milliseconds=age_up_times[1]))
+        if 3 <= len(age_up_times):
+            game_analysis[player_number]['age_up_times']['imperial'] = str(datetime.timedelta(milliseconds=age_up_times[2]))
     
     return game_analysis
