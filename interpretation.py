@@ -1,3 +1,4 @@
+from constants import *
 import math
 import datetime
 
@@ -17,8 +18,8 @@ def get_time_for_research_of(id, data):
     # get last time it was researched in case it was cancelled before and clicked again
     # we don't know if it was cancelled though after the last time it was clicked
     last = math.inf
-    if id in data['tech']:
-        last = data['tech'][id][len(data['tech'][id]) - 1]
+    if id in data[RESEARCH]:
+        last = data[RESEARCH][id][len(data[RESEARCH][id]) - 1]
     return last
 
 def get_build_order(players):
@@ -30,42 +31,42 @@ def get_build_order(players):
         player_civ = player['civilization_name']
         player_id = player['user_id']
         winner = player['winner']
-        age_up_times = player['age_up_times']
+        age_up_times = player[AGE_UP_TIMES]
 
-        first_house, second_house = get_times_for_first_and_second_creation_of('buildings', 70, player)
-        first_barracks, second_barracks = get_times_for_first_and_second_creation_of('buildings', 12, player)
-        first_stable, second_stable = get_times_for_first_and_second_creation_of('buildings', 101, player)
-        first_range, second_range = get_times_for_first_and_second_creation_of('buildings', 87, player)
-        first_mill = get_times_for_first_and_second_creation_of('buildings', 68, player)[0]
-        first_blacksmith = get_times_for_first_and_second_creation_of('buildings', 103, player)[0]
-        first_market = get_times_for_first_and_second_creation_of('buildings', 84, player)[0]
-        first_castle, second_castle = get_times_for_first_and_second_creation_of('buildings', 82, player)
-        first_dock = get_times_for_first_and_second_creation_of('buildings', 45, player)[0]
-        second_tc, third_tc = get_times_for_first_and_second_creation_of('buildings', 621, player)
+        first_house, second_house = get_times_for_first_and_second_creation_of(BUILDINGS, ID_HOUSE, player)
+        first_barracks, second_barracks = get_times_for_first_and_second_creation_of(BUILDINGS, ID_BARRACKS, player)
+        first_stable, second_stable = get_times_for_first_and_second_creation_of(BUILDINGS, ID_STABLE, player)
+        first_range, second_range = get_times_for_first_and_second_creation_of(BUILDINGS, ID_RANGE, player)
+        first_mill = get_times_for_first_and_second_creation_of(BUILDINGS, ID_MILL, player)[0]
+        first_blacksmith = get_times_for_first_and_second_creation_of(BUILDINGS, ID_BLACKSMITH, player)[0]
+        first_market = get_times_for_first_and_second_creation_of(BUILDINGS, ID_MARKET, player)[0]
+        first_castle, second_castle = get_times_for_first_and_second_creation_of(BUILDINGS, ID_CASTLE, player)
+        first_dock = get_times_for_first_and_second_creation_of(BUILDINGS, ID_DOUBLE_BIT_AXE, player)[0]
+        second_tc, third_tc = get_times_for_first_and_second_creation_of(BUILDINGS, ID_TC, player)
 
-        loom_clicked = get_time_for_research_of(22, player)
-        double_bit_axe = get_time_for_research_of(202, player)
-        horse_collar = get_time_for_research_of(14, player)
+        loom_clicked = get_time_for_research_of(ID_LOOM, player)
+        double_bit_axe = get_time_for_research_of(ID_DOUBLE_BIT_AXE, player)
+        horse_collar = get_time_for_research_of(ID_HORSE_COLLAR, player)
 
-        feudal_age_clicked = get_time_for_research_of(101, player)
-        castle_age_clicked = get_time_for_research_of(102, player)
-        imperial_age_clicked = get_time_for_research_of(103, player)
+        feudal_age_clicked = get_time_for_research_of(ID_FEUDAL_AGE, player)
+        castle_age_clicked = get_time_for_research_of(ID_CASTLE_AGE, player)
+        imperial_age_clicked = get_time_for_research_of(ID_IMPERIAL_AGE, player)
 
-        first_militia, second_militia = get_times_for_first_and_second_creation_of('units', 74, player)
-        first_archer, second_archer = get_times_for_first_and_second_creation_of('units', 4, player)
-        first_skrim, second_skirm = get_times_for_first_and_second_creation_of('units', 7, player)
-        first_scout, second_scout = get_times_for_first_and_second_creation_of('units', 448, player)
-        first_knight, second_knight = get_times_for_first_and_second_creation_of('units', 38, player)
-        first_eagle, second_eagle = get_times_for_first_and_second_creation_of('units', 751, player)
-        first_elephant, second_elephant = get_times_for_first_and_second_creation_of('units', 1132, player)
-        first_camel, second_camel = get_times_for_first_and_second_creation_of('units', 329, player)
+        first_militia, second_militia = get_times_for_first_and_second_creation_of(UNITS, ID_MILITA, player)
+        first_archer, second_archer = get_times_for_first_and_second_creation_of(UNITS, ID_ARCHER, player)
+        first_skrim, second_skirm = get_times_for_first_and_second_creation_of(UNITS, ID_SKIRMISHER, player)
+        first_scout, second_scout = get_times_for_first_and_second_creation_of(UNITS, ID_SCOUT, player)
+        first_knight, second_knight = get_times_for_first_and_second_creation_of(UNITS, ID_KNIGHT, player)
+        first_eagle, second_eagle = get_times_for_first_and_second_creation_of(UNITS, ID_EAGLE, player)
+        first_elephant, second_elephant = get_times_for_first_and_second_creation_of(UNITS, ID_BATTLE_ELEPHANT, player)
+        first_camel, second_camel = get_times_for_first_and_second_creation_of(UNITS, ID_CAMEL, player)
 
-        man_at_arms_upgrade = get_time_for_research_of(222, player)
-        first_tower, second_tower = get_times_for_first_and_second_creation_of('buildings', 79, player)
+        man_at_arms_upgrade = get_time_for_research_of(ID_MAN_AT_ARMS_UPGRADE, player)
+        first_tower, second_tower = get_times_for_first_and_second_creation_of(BUILDINGS, ID_TOWER, player)
 
         build = ''
 
-        if first_barracks < second_house and player['civilization'] != 17 and player['civilization'] == 35:  # Huns & Lithuanians
+        if first_barracks < second_house and player[CIV] != 17 and player[CIV] == 35:  # Huns & Lithuanians
             build = '3-Minute Drush → '
         elif first_barracks < feudal_age_clicked and first_barracks < first_mill and first_militia < feudal_age_clicked:
             build = 'Pre-Mill Drush → '
@@ -77,9 +78,9 @@ def get_build_order(players):
             build = 'Drush'
         if first_tower < first_barracks:
             build += 'Towers'
-        elif second_tc < castle_age_clicked and player['civilization'] == 8: # Persians
+        elif second_tc < castle_age_clicked and player[CIV] == 8: # Persians
             build += 'Douche'
-        elif second_tc < castle_age_clicked and player['civilization'] == 34: # Cumans
+        elif second_tc < castle_age_clicked and player[CIV] == 34: # Cumans
             build += 'Feudal Boom'
         elif first_stable < first_range and first_stable < first_market and first_scout < first_archer and first_scout < man_at_arms_upgrade and first_scout < castle_age_clicked:
             build += 'Scouts'
@@ -118,10 +119,10 @@ def get_build_order(players):
                     'build': build, 'age_up_times': {}}
 
         if 1 <= len(age_up_times):
-            game_analysis[player_number]['age_up_times']['feudal'] = str(datetime.timedelta(milliseconds=age_up_times[0]))
+            game_analysis[player_number][AGE_UP_TIMES]['feudal'] = str(datetime.timedelta(milliseconds=age_up_times[0]))
         if 2 <= len(age_up_times):
-            game_analysis[player_number]['age_up_times']['castle'] = str(datetime.timedelta(milliseconds=age_up_times[1]))
+            game_analysis[player_number][AGE_UP_TIMES]['castle'] = str(datetime.timedelta(milliseconds=age_up_times[1]))
         if 3 <= len(age_up_times):
-            game_analysis[player_number]['age_up_times']['imperial'] = str(datetime.timedelta(milliseconds=age_up_times[2]))
+            game_analysis[player_number][AGE_UP_TIMES]['imperial'] = str(datetime.timedelta(milliseconds=age_up_times[2]))
     
     return game_analysis

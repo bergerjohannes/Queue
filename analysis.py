@@ -1,3 +1,4 @@
+from constants import *
 import zipfile
 import io
 from mgz import header, body, fast
@@ -18,14 +19,14 @@ def game_summary(game_id, data):
             players_data = s.get_players()
             for index in range(len(players_data)):
                 players[index + 1] = {'name': players_data[index]['name'],
-                                      'civilization': players_data[index]['civilization'],
-                                      'civilization_name': knowledge.get_name_for_civ(players_data[index]['civilization']),
+                                      CIV: players_data[index][CIV],
+                                      'civilization_name': knowledge.get_name_for_civ(players_data[index][CIV]),
                                       'winner': players_data[index]['winner'],
                                       'user_id': players_data[index]['user_id'],
-                                      'buildings': {},
-                                      'tech': {},
-                                      'units': {},
-                                      'age_up_times': []}
+                                      BUILDINGS: {},
+                                      RESEARCH: {},
+                                      UNITS: {},
+                                      AGE_UP_TIMES: []}
 
         with zip_ref.open(file_name) as data:
             header.parse_stream(data)
@@ -43,7 +44,7 @@ def game_summary(game_id, data):
                         if str(x[1][0]) == 'Action.SPECIAL':
                             pass
                         if str(x[1][0]) == 'Action.RESIGN':
-                            player_id = x[1][1]['player_id']
+                            player_id = x[1][1][PLAYER_ID]
                             players[player_id]['resigned'] = ingame_time
                         if str(x[1][0]) == 'Action.GAME':
                             pass
@@ -54,23 +55,23 @@ def game_summary(game_id, data):
                         if str(x[1][0]) == 'Action.TRIBUTE':
                             pass
                         if str(x[1][0]) == 'Action.BUILD':
-                            player_id = x[1][1]['player_id']
-                            building_id = x[1][1]['building_id']
-                            players = document_action('buildings', building_id, ingame_time, players, player_id)
+                            player_id = x[1][1][PLAYER_ID]
+                            building_id = x[1][1][BUILDING_ID]
+                            players = document_action(BUILDINGS, building_id, ingame_time, players, player_id)
                         if str(x[1][0]) == 'Action.DE_QUEUE':
-                            player_id = x[1][1]['player_id']
-                            unit_id = x[1][1]['unit_id']
-                            players = document_action('units', unit_id, ingame_time, players, player_id)
+                            player_id = x[1][1][PLAYER_ID]
+                            unit_id = x[1][1][UNIT_ID]
+                            players = document_action(UNITS, unit_id, ingame_time, players, player_id)
                         if str(x[1][0]) == 'Action.RESEARCH':
-                            player_id = x[1][1]['player_id']
-                            technology_id = x[1][1]['technology_id']
-                            players = document_action('tech', technology_id, ingame_time, players, player_id)
+                            player_id = x[1][1][PLAYER_ID]
+                            technology_id = x[1][1][TECHNOLOGY_ID]
+                            players = document_action(RESEARCH, technology_id, ingame_time, players, player_id)
                     elif x[0].name == 'CHAT':
                         message = ast.literal_eval(x[1].decode('UTF-8'))['messageAGP']
                         for index in range(len(players)):
                             player = players[index + 1]
                             if knowledge.chat_indicates_age_up(message, player['name']):
-                                players[index + 1]['age_up_times'].append(ingame_time)
+                                players[index + 1][AGE_UP_TIMES].append(ingame_time)
                     if x[0].name == 'ACTION':
                         counter += 1
                 except EOFError:
