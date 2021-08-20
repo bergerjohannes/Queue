@@ -1,6 +1,6 @@
+from helper import *
 from constants import *
 import math
-import datetime
 
 def get_times_for_first_and_second_creation_of(type, id, data):
     first = math.inf
@@ -116,13 +116,13 @@ def get_build_order(players):
             build += 'Fast Imperial'
 
         game_analysis[player_number] = {'name': player_name, 'id': player_id, 'winner': winner, 'civ': player_civ,
-                    'build': build, 'age_up_times': {}}
+                    'build': build, AGE_UP_TIMES: {}}
 
         if 1 <= len(age_up_times):
-            game_analysis[player_number][AGE_UP_TIMES]['feudal'] = str(datetime.timedelta(milliseconds=age_up_times[0]))
+            game_analysis[player_number][AGE_UP_TIMES]['feudal'] = get_readable_time_from_ingame_timestamp(age_up_times[0])
         if 2 <= len(age_up_times):
-            game_analysis[player_number][AGE_UP_TIMES]['castle'] = str(datetime.timedelta(milliseconds=age_up_times[1]))
+            game_analysis[player_number][AGE_UP_TIMES]['castle'] = get_readable_time_from_ingame_timestamp(age_up_times[1])
         if 3 <= len(age_up_times):
-            game_analysis[player_number][AGE_UP_TIMES]['imperial'] = str(datetime.timedelta(milliseconds=age_up_times[2]))
+            game_analysis[player_number][AGE_UP_TIMES]['imperial'] = get_readable_time_from_ingame_timestamp(age_up_times[2])
     
     return game_analysis
