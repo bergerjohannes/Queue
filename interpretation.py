@@ -28,6 +28,8 @@ def get_build_order(players):
     for player_number in range(1, len(players) + 1):
         player = players[player_number]
         player_name = player['name']
+        number = player['number']
+        color = player['color']
         player_civ = player['civilization_name']
         player_id = player['user_id']
         winner = player['winner']
@@ -115,7 +117,7 @@ def get_build_order(players):
         elif first_market < castle_age_clicked and first_blacksmith < castle_age_clicked and first_stable > imperial_age_clicked and first_range > imperial_age_clicked:
             build += 'Fast Imperial'
 
-        game_analysis[player_number] = {'name': player_name, 'id': player_id, 'winner': winner, 'civ': player_civ,
+        game_analysis[player_number] = {'name': player_name, 'id': player_id, 'number': number, 'color': color, 'winner': winner, 'civ': player_civ,
                     'build': build, AGE_UP_TIMES: {}}
 
         if 1 <= len(age_up_times):

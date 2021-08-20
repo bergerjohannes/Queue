@@ -25,9 +25,10 @@ def analyze():
     if 'error' in data.keys():
         return {'error': data['error']}, 404
 
-    players = analysis.game_summary(game_id, data)
-    interpretation_result = interpretation.get_build_order(players)
-    return {'players': interpretation_result}, 200
+    info = analysis.game_summary(game_id, data)
+    interpretation_result = interpretation.get_build_order(info['players'])
+    info['players'] = interpretation_result
+    return info, 200
 
 if __name__ == '__main__':
     # This is used when running locally only.

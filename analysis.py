@@ -1,4 +1,5 @@
 from constants import *
+from helper import *
 import zipfile
 import io
 from mgz import header, body, fast
@@ -12,11 +13,23 @@ def game_summary(game_id, data):
     file_name = 'AgeIIDE_Replay_' + game_id + '.aoe2record'
 
     players = {}
+    info = {}
 
     with zipfile.ZipFile(io.BytesIO(game)) as zip_ref:
         with zip_ref.open(file_name) as data:
             s = Summary(data)
             players_data = s.get_players()
+            info['duration'] = get_readable_time_from_ingame_timestamp(s.get_duration())
+            info['map_name'] = s.get_map()['name']
+            info['map_size'] = s.get_map()['size']
+            info['number_of_players'] = len(players_data)
+            teams = []
+            for team in s.get_teams():
+                team_data = []
+                for player in team:
+                    team_data.append(player)
+                teams.append(team_data)
+            info['teams'] = teams
             for index in range(len(players_data)):
                 players[index + 1] = {'name': players_data[index]['name'],
                                       CIV: players_data[index][CIV],
@@ -26,7 +39,11 @@ def game_summary(game_id, data):
                                       BUILDINGS: {},
                                       RESEARCH: {},
                                       UNITS: {},
-                                      AGE_UP_TIMES: []}
+                                      AGE_UP_TIMES: [],
+                                      'number': players_data[index]['number'],
+                                      'color': players_data[index]['color_id'],
+
+}
 
         with zip_ref.open(file_name) as data:
             header.parse_stream(data)
@@ -152,7 +169,8 @@ def game_summary(game_id, data):
                         counter += 1
                 except EOFError:
                     break
-    return players
+    info['players'] = players
+    return info
 
 def document_action(type, event, time, data, player):
     if event in data[player][type]:
