@@ -14,3 +14,6 @@ Games can only be analyzed when they are available through `https://aoe.ms`
 
 ## Game parser
 https://github.com/happyleavesaoc/aoc-mgz
+
+## License
+MIT
