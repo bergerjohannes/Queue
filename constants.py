@@ -8,6 +8,8 @@ PLAYER_ID = 'player_id'
 BUILDING_ID = 'building_id'
 TECHNOLOGY_ID = 'technology_id'
 UNIT_ID = 'unit_id'
+DEQUEUE_EVENTS_AT_INITIAL_TC = 'dequeue_event_at_initial_TC'
+INITIAL_TC_ID = 'initial_TC_id'
 
 # Buildings
 ID_HOUSE = 70
@@ -44,3 +46,6 @@ ID_BATTLE_ELEPHANT = 1132
 ID_CAMEL = 329
 ID_VILLAGER_MALE = 83
 ID_VILLAGER_FEMALE = 293
+
+# Special order types
+SPECIAL_ORDER_TYPE_DEQUEUE = 4

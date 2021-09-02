@@ -126,5 +126,48 @@ def get_build_order(players):
             game_analysis[player_number][AGE_UP_TIMES]['castle'] = get_readable_time_from_ingame_timestamp(age_up_times[1])
         if 3 <= len(age_up_times):
             game_analysis[player_number][AGE_UP_TIMES]['imperial'] = get_readable_time_from_ingame_timestamp(age_up_times[2])
-    
+
+        #calculate_TC_idle_time_in_dark_age(player)
+
     return game_analysis
+
+def get_times_for_first_and_second_creation_of(type, id, data):
+    first = math.inf
+    second = math.inf
+    if id in data[type]:
+        for index in range(len(data[type][id])):
+            if index == 0:
+                first = data[type][id][0]
+            if index == 1:
+                second = data[type][id][1]
+    return (first, second)
+
+def calculate_TC_idle_time_in_dark_age(player): # This is not working (yet) because we don't get all dequeue events and sometimes queues are triggered multiple times even if it's technically not possible because the player has not enough resources to afford the unit multiple times
+    feudal_age_reached = player[AGE_UP_TIMES][0] # ToDo: what if game ended before Feudal was reached
+    loom_queued = player[RESEARCH][ID_LOOM][len(player[RESEARCH][ID_LOOM])-1] # ToDo: what if game ended before Loom was queued
+    feudal_age_queued = player[RESEARCH][ID_FEUDAL_AGE][len(player[RESEARCH][ID_FEUDAL_AGE])-1] # ToDo: what if game ended before Feudal was queued
+
+    villagers = player[UNITS][ID_VILLAGER_MALE]
+    villagers_in_dark_age = []
+    for index in range(len(villagers)):
+        if villagers[index] < feudal_age_queued:
+            villagers_in_dark_age.append(villagers[index])
+    print(f"{player['name']} queued {len(villagers_in_dark_age)} villagers before clicking up.")
+
+    dequeues_at_initial_TC = player[DEQUEUE_EVENTS_AT_INITIAL_TC]
+    dequeues_in_dark_age = []
+    for index in range(len(dequeues_at_initial_TC)):
+        if dequeues_at_initial_TC[index] < feudal_age_queued:
+            dequeues_in_dark_age.append(dequeues_at_initial_TC[index])
+    print(f"{player['name']} dequeued {len(dequeues_in_dark_age)} villagers or techs before clicking up.")
+
+    active_TC_time = len(villagers_in_dark_age) * 25000
+    if loom_queued < feudal_age_queued:
+        print("Loom was researched before clicking up.")
+        active_TC_time += 25000
+    else:
+        print("Loom was not researched before clicking up.")
+
+    feudal_age_research_time = 130000
+    idle_TC_time = feudal_age_reached - active_TC_time - feudal_age_research_time
+    print(f"Calculated idle TC time: {get_readable_time_from_ingame_timestamp(idle_TC_time)}")
