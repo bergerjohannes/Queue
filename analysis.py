@@ -49,8 +49,6 @@ def game_summary(game_id, data):
 }
         with zip_ref.open(file_name) as data:
             match = parse_match(data)
-            match.map.name
-            match.file.perspective.number
 
             lastActionTime = match.actions[-1].timestamp
             gameDurationMinutes = int(lastActionTime.total_seconds() / 60)
