@@ -34,6 +34,8 @@ def get_build_order(players):
         player_id = player['user_id']
         winner = player['winner']
         age_up_times = player[AGE_UP_TIMES]
+        apm_over_time = player['apm_over_time']
+        mean_apm = player['mean_apm']
 
         first_house, second_house = get_times_for_first_and_second_creation_of(BUILDINGS, ID_HOUSE, player)
         first_barracks, second_barracks = get_times_for_first_and_second_creation_of(BUILDINGS, ID_BARRACKS, player)
@@ -118,7 +120,7 @@ def get_build_order(players):
             build += 'Fast Imperial'
 
         game_analysis[player_number] = {'name': player_name, 'id': player_id, 'number': number, 'color': color, 'winner': winner, 'civ': player_civ,
-                    'build': build, AGE_UP_TIMES: {}}
+                    'build': build, AGE_UP_TIMES: {}, 'apm_over_time': apm_over_time, 'mean_apm': mean_apm}
 
         if 1 <= len(age_up_times):
             game_analysis[player_number][AGE_UP_TIMES]['feudal'] = get_readable_time_from_ingame_timestamp(age_up_times[0])
