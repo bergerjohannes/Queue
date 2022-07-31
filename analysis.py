@@ -59,7 +59,7 @@ def game_summary(game_id, data):
                         ingame_time += x[1][0]
                     elif x[0].name == 'ACTION':
                         if str(x[1][0]) == 'Action.SPECIAL':
-                            if x[1][1]['order_type'] == SPECIAL_ORDER_TYPE_DEQUEUE:
+                            if 'order_type' in x[1][1] and x[1][1]['order_type'] == SPECIAL_ORDER_TYPE_DEQUEUE:
                                 for index in range(len(players_data)):
                                     if  INITIAL_TC_ID in players[index+1] and players[index+1][INITIAL_TC_ID] == x[1][1]['object_ids'][0]:
                                         players = document_action(DEQUEUE_EVENTS_AT_INITIAL_TC, None, ingame_time, players, player_id)
