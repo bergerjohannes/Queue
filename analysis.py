@@ -111,7 +111,6 @@ def game_summary(game_id, data):
                         ingame_time += x[1][0]
                     elif operation == Operation.CHAT.name:
                         message = ast.literal_eval(x[1].decode('UTF-8'))['messageAGP']
-                        print(message)
                         for index in range(len(players)):
                             player = players[index + 1]
                             if knowledge.chat_indicates_age_up(message, player['name']):
@@ -132,7 +131,6 @@ def game_summary(game_id, data):
                                     if  INITIAL_TC_ID in players[index+1] and players[index+1][INITIAL_TC_ID] == x[1][1]['object_ids'][0]:
                                         document_action(DEQUEUE_EVENTS_AT_INITIAL_TC, None, ingame_time, players, player_id)
                         if action == Action.RESIGN.name:
-                            print('RESIGN')
                             player_id = x[1][1][PLAYER_ID]
                             players[player_id]['resigned'] = ingame_time
                         if action == Action.GAME.name:
@@ -140,8 +138,7 @@ def game_summary(game_id, data):
                         if action == Action.POSTGAME.name:
                             pass
                         if action == Action.DELETE.name:
-                            player_id = x[1][1][PLAYER_ID]
-                            document_apm(ingame_time, players, player_id)
+                            pass
                         if action == Action.ORDER.name:
                             if 'building_id' in x[1][1] and x[1][1]['building_id'] == -1: # This is a dequeue event
                                 for index in range(len(players_data)):
