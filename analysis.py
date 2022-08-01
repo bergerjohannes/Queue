@@ -107,136 +107,139 @@ def game_summary(game_id, data):
                 try:
                     x = fast.operation(data)
                     operation = x[0].name
-                    if operation == Operation.VIEWLOCK:
-                        pass
-                    elif operation == Operation.SYNC:
+                    if operation == Operation.SYNC.name:
                         ingame_time += x[1][0]
-                    elif operation == Operation.START:
+                    elif operation == Operation.CHAT.name:
+                        message = ast.literal_eval(x[1].decode('UTF-8'))['messageAGP']
+                        print(message)
+                        for index in range(len(players)):
+                            player = players[index + 1]
+                            if knowledge.chat_indicates_age_up(message, player['name']):
+                                players[index + 1][AGE_UP_TIMES].append(ingame_time)
+                    elif operation == Operation.VIEWLOCK.name:
                         pass
-                    elif operation == Operation.POSTGAME:
+                    elif operation == Operation.START.name:
                         pass
-                    elif operation == Operation.SAVE:
+                    elif operation == Operation.POSTGAME.name:
                         pass
-                    elif operation == Operation.ACTION:
-                        action = str(x[1][0])                     
-                        if action == Action.SPECIAL:
+                    elif operation == Operation.SAVE.name:
+                        pass
+                    elif operation == Operation.ACTION.name:
+                        action = str(x[1][0]).split('.')[1]
+                        if action == Action.SPECIAL.name:
                             if 'order_type' in x[1][1] and x[1][1]['order_type'] == SPECIAL_ORDER_TYPE_DEQUEUE:
                                 for index in range(len(players_data)):
                                     if  INITIAL_TC_ID in players[index+1] and players[index+1][INITIAL_TC_ID] == x[1][1]['object_ids'][0]:
                                         document_action(DEQUEUE_EVENTS_AT_INITIAL_TC, None, ingame_time, players, player_id)
-                        if action == Action.RESIGN:
+                        if action == Action.RESIGN.name:
+                            print('RESIGN')
                             player_id = x[1][1][PLAYER_ID]
                             players[player_id]['resigned'] = ingame_time
-                        if action == Action.GAME:
+                        if action == Action.GAME.name:
                             pass
-                        if action == Action.POSTGAME:
+                        if action == Action.POSTGAME.name:
                             pass
-                        if action == Action.DELETE:
-                            pass
-                        if action == Action.ORDER:
+                        if action == Action.DELETE.name:
+                            player_id = x[1][1][PLAYER_ID]
+                            document_apm(ingame_time, players, player_id)
+                        if action == Action.ORDER.name:
                             if 'building_id' in x[1][1] and x[1][1]['building_id'] == -1: # This is a dequeue event
                                 for index in range(len(players_data)):
                                     if  INITIAL_TC_ID in players[index+1] and 'unit_ids' in x[1][1] and players[index+1][INITIAL_TC_ID] in x[1][1]['unit_ids']:
                                         document_action(DEQUEUE_EVENTS_AT_INITIAL_TC, None, ingame_time, players, player_id)
                             pass
-                        if action == Action.GATHER_POINT:
+                        if action == Action.GATHER_POINT.name:
                             pass
-                        if action == Action.BACK_TO_WORK:
+                        if action == Action.BACK_TO_WORK.name:
                             pass
-                        if action == Action.WORK:
+                        if action == Action.WORK.name:
                             pass
-                        if action == Action.CREATE:
+                        if action == Action.CREATE.name:
                             pass
-                        if action == Action.UNGARRISON:
+                        if action == Action.UNGARRISON.name:
                             pass
-                        if action == Action.WALL:
+                        if action == Action.WALL.name:
                             pass
-                        if action == Action.STANCE:
+                        if action == Action.STANCE.name:
                             pass
-                        if action == Action.FORMATION:
+                        if action == Action.FORMATION.name:
                             pass
-                        if action == Action.PATROL:
+                        if action == Action.PATROL.name:
                             pass                      
-                        if action == Action.SELL:
+                        if action == Action.SELL.name:
                             pass
-                        if action == Action.BUY:
+                        if action == Action.BUY.name:
                             pass
-                        if action == Action.GAME:
+                        if action == Action.GAME.name:
                             pass
-                        if action == Action.MOVE:
+                        if action == Action.MOVE.name:
                             pass
-                        if action == Action.TRIBUTE:
+                        if action == Action.TRIBUTE.name:
                             pass
-                        if action == Action.REPAIR:
+                        if action == Action.REPAIR.name:
                             pass
-                        if action == Action.ATTACK_GROUND:
+                        if action == Action.ATTACK_GROUND.name:
                             pass
-                        if action == Action.STOP:
+                        if action == Action.STOP.name:
                             pass
-                        if action == Action.GUARD:
+                        if action == Action.GUARD.name:
                             pass
-                        if action == Action.FOLLOW:
+                        if action == Action.FOLLOW.name:
                             pass
-                        if action == Action.DROP_RELIC:
+                        if action == Action.DROP_RELIC.name:
                             pass
-                        if action == Action.FLARE:
+                        if action == Action.FLARE.name:
                             pass
-                        if action == Action.DE_ATTACK_MOVE:
+                        if action == Action.DE_ATTACK_MOVE.name:
                             pass
-                        if action == Action.ADD_ATTRIBUTE:
+                        if action == Action.ADD_ATTRIBUTE.name:
                             pass
-                        if action == Action.GIVE_ATTRIBUTE:
+                        if action == Action.GIVE_ATTRIBUTE.name:
                             pass
-                        if action == Action.AI_ORDER:
+                        if action == Action.AI_ORDER.name:
                             pass
-                        if action == Action.SPECTATE:
+                        if action == Action.SPECTATE.name:
                             pass
-                        if action == Action.ADD_WAYPOINT:
+                        if action == Action.ADD_WAYPOINT.name:
                             pass
-                        if action == Action.SAVE:
+                        if action == Action.SAVE.name:
                             pass
-                        if action == Action.GROUP_MULTI_WAYPOINTS:
+                        if action == Action.GROUP_MULTI_WAYPOINTS.name:
                             pass
-                        if action == Action.CHAPTER:
+                        if action == Action.CHAPTER.name:
                             pass
-                        if action == Action.DE_AUTOSCOUT:
+                        if action == Action.DE_AUTOSCOUT.name:
                             pass
-                        if action == Action.AI_COMMAND:
+                        if action == Action.AI_COMMAND.name:
                             pass
-                        if action == Action.MAKE:
+                        if action == Action.MAKE.name:
                             pass
-                        if action == Action.MULTIQUEUE:
+                        if action == Action.MULTIQUEUE.name:
                             pass
-                        if action == Action.GATE:
+                        if action == Action.GATE.name:
                             pass
-                        if action == Action.QUEUE:
+                        if action == Action.QUEUE.name:
                             pass
-                        if action == Action.TOWN_BELL:
+                        if action == Action.TOWN_BELL.name:
                             pass
-                        if action == Action.DE_TRIBUTE:
+                        if action == Action.DE_TRIBUTE.name:
                             pass
-                        if action == Action.BUILD:
+                        if action == Action.BUILD.name:
                             player_id = x[1][1][PLAYER_ID]
                             building_id = x[1][1][BUILDING_ID]
                             document_action(BUILDINGS, building_id, ingame_time, players, player_id)
-                        if action == Action.DE_QUEUE:
+                        if action == Action.DE_QUEUE.name:
                             player_id = x[1][1][PLAYER_ID]
                             unit_id = x[1][1][UNIT_ID]
                             document_action(UNITS, unit_id, ingame_time, players, player_id)
                             if unit_id == ID_VILLAGER_MALE and not INITIAL_TC_ID in players[player_id]:
                                 players[player_id][INITIAL_TC_ID] = x[1][1]['object_ids'][0]
-                        if action == Action.RESEARCH:
+                        if action == Action.RESEARCH.name:
                             player_id = x[1][1][PLAYER_ID]
                             technology_id = x[1][1][TECHNOLOGY_ID]
                             document_action(RESEARCH, technology_id, ingame_time, players, player_id)
-                        if action == Action.HD_UNKNOWN_34 or action == Action.DE_UNKNOWN_35 or action == Action.DE_UNKNOWN_37 or action == Action.DE_UNKNOWN_39 or action == Action.DE_UNKNOWN_41 or action == Action.DE_UNKNOWN_43 or action == Action.DE_UNKNOWN_80 or action == Action.DE_UNKNOWN_109 or action == Action.DE_UNKNOWN_130 or action == Action.DE_UNKNOWN_131 or action == Action.DE_UNKNOWN_135 or action == Action.DE_UNKNOWN_138:
+                        if action == Action.HD_UNKNOWN_34.name or action == Action.DE_UNKNOWN_35.name or action == Action.DE_UNKNOWN_37.name or action == Action.DE_UNKNOWN_39.name or action == Action.DE_UNKNOWN_41.name or action == Action.DE_UNKNOWN_43.name or action == Action.DE_UNKNOWN_80.name or action == Action.DE_UNKNOWN_109.name or action == Action.DE_UNKNOWN_130.name or action == Action.DE_UNKNOWN_131.name or action == Action.DE_UNKNOWN_135.name or action == Action.DE_UNKNOWN_138.name:
                             pass
-                    elif operation == Operation.CHAT:
-                        message = ast.literal_eval(x[1].decode('UTF-8'))['messageAGP']
-                        for index in range(len(players)):
-                            player = players[index + 1]
-                            if knowledge.chat_indicates_age_up(message, player['name']):
-                                players[index + 1][AGE_UP_TIMES].append(ingame_time)
                 except EOFError:
                     break
     info['players'] = players
