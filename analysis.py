@@ -194,6 +194,9 @@ def game_summary(game_id, data):
                             pass
                 except EOFError:
                     break
+
+    finalize_apm_calculation(players, ingame_time)
+
     info['players'] = players
     return info
 
@@ -211,7 +214,19 @@ def document_action(type, event, time, data, player):
 
 def document_apm(ingame_time, data, player):
     current_minute = str(int(ingame_time / 1000 / 60))
+    data[player]['mean_apm'] += 1
     if not current_minute in data[player]['apm_over_time']:
         data[player]['apm_over_time'][current_minute] = 1
     else:
         data[player]['apm_over_time'][current_minute] += 1
+
+def finalize_apm_calculation(players, ingame_time):
+    for player in players:
+        # Finish mean apm calculation by dividing through the game time 
+        players[player]['mean_apm'] = round(players[player]['mean_apm'] / (ingame_time / 1000) * 60)
+
+        # Adapt APM from last minute
+        last_minute = str(int(ingame_time / 1000 / 60))
+        if last_minute in players[player]['apm_over_time']:
+            seconds_in_last_minute = ingame_time / 1000 % 60
+            players[player]['apm_over_time'][last_minute] = round(players[player]['apm_over_time'][last_minute] / seconds_in_last_minute * 60)
