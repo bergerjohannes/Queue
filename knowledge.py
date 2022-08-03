@@ -1,8 +1,8 @@
 def get_name_for_civ(index):
         civs = ['Britons', 'Franks', 'Goths', 'Teutons', 'Japanese', 'Chinese', 'Byzantines', 'Persians', 'Saracens',
             'Turks', 'Vikings', 'Mongols', 'Celts', 'Spanish', 'Aztecs', 'Mayans', 'Huns', 'Koreans', 'Italians',
-            'Indians', 'Incas', 'Magyars', 'Slavs', 'Portuguese', 'Ethiopians', 'Malians', 'Berbers', 'Khmer', 'Malay',
-            'Burmese', 'Vietnamese', 'Bulgarians', 'Tatars', 'Cumans', 'Lithuanians', 'Burgandians', 'Sicilians', 'Poles', 'Bohemians']
+            'Hindustanis', 'Incas', 'Magyars', 'Slavs', 'Portuguese', 'Ethiopians', 'Malians', 'Berbers', 'Khmer', 'Malay',
+            'Burmese', 'Vietnamese', 'Bulgarians', 'Tatars', 'Cumans', 'Lithuanians', 'Burgandians', 'Sicilians', 'Poles', 'Bohemians', 'Dravidians', 'Bengalis', 'Gurjaras']
         return civs[index - 1]
 
 # Supporting all localizations that are available as of September 2021: BR, DE, EN ES, FR, HI, IT, JP, KO, MS, MX, PL, RU, TR, TW, VI, ZH
