@@ -12,6 +12,14 @@ TECHNOLOGY_ID = 'technology_id'
 UNIT_ID = 'unit_id'
 DEQUEUE_EVENTS_AT_INITIAL_TC = 'dequeue_event_at_initial_TC'
 INITIAL_TC_ID = 'initial_TC_id'
+MEAN_APM = 'mean_apm'
+APM_OVER_TIME = 'apm_over_time'
+OBJECT_IDS = 'object_ids'
+ORDER_TYPE = 'order_type'
+BUILDING_ID = 'building_id'
+UNIT_IDS = 'unit_ids'
+RESIGNED = 'resigned'
+MESSAGE_AGP = 'messageAGP'
 
 # Buildings
 ID_HOUSE = 70

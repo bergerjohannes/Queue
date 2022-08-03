@@ -43,8 +43,8 @@ def game_summary(game_id, data):
                                       DEQUEUE_EVENTS_AT_INITIAL_TC: [],
                                       'number': players_data[index]['number'],
                                       'color': players_data[index]['color_id'],
-                                      'apm_over_time': {},
-                                      'mean_apm': 0}
+                                      APM_OVER_TIME: {},
+                                      MEAN_APM: 0}
 
         with zip_ref.open(file_name) as data:
             header.parse_stream(data)
@@ -57,7 +57,7 @@ def game_summary(game_id, data):
                     if operation == Operation.SYNC.name:
                         ingame_time += x[1][0]
                     elif operation == Operation.CHAT.name:
-                        message = ast.literal_eval(x[1].decode('UTF-8'))['messageAGP']
+                        message = ast.literal_eval(x[1].decode('UTF-8'))[MESSAGE_AGP]
                         for index in range(len(players)):
                             player = players[index + 1]
                             if knowledge.chat_indicates_age_up(message, player['name']):
@@ -81,13 +81,13 @@ def game_summary(game_id, data):
                                 document_apm(ingame_time, players, player_id)
 
                         if action == Action.SPECIAL.name:
-                            if 'order_type' in x[1][1] and x[1][1]['order_type'] == SPECIAL_ORDER_TYPE_DEQUEUE:
+                            if ORDER_TYPE in x[1][1] and x[1][1][ORDER_TYPE] == SPECIAL_ORDER_TYPE_DEQUEUE:
                                 for index in range(len(players_data)):
-                                    if  INITIAL_TC_ID in players[index+1] and players[index+1][INITIAL_TC_ID] == x[1][1]['object_ids'][0]:
+                                    if  INITIAL_TC_ID in players[index+1] and players[index+1][INITIAL_TC_ID] == x[1][1][OBJECT_IDS][0]:
                                         document_action(DEQUEUE_EVENTS_AT_INITIAL_TC, None, ingame_time, players, player_id)
                         if action == Action.RESIGN.name:
                             player_id = x[1][1][PLAYER_ID]
-                            players[player_id]['resigned'] = ingame_time
+                            players[player_id][RESIGNED] = ingame_time
                         if action == Action.GAME.name:
                             pass
                         if action == Action.POSTGAME.name:
@@ -95,9 +95,9 @@ def game_summary(game_id, data):
                         if action == Action.DELETE.name:
                             pass
                         if action == Action.ORDER.name:
-                            if 'building_id' in x[1][1] and x[1][1]['building_id'] == -1: # This is a dequeue event
+                            if BUILDING_ID in x[1][1] and x[1][1][BUILDING_ID] == -1: # This is a dequeue event
                                 for index in range(len(players_data)):
-                                    if  INITIAL_TC_ID in players[index+1] and 'unit_ids' in x[1][1] and players[index+1][INITIAL_TC_ID] in x[1][1]['unit_ids']:
+                                    if  INITIAL_TC_ID in players[index+1] and UNIT_IDS in x[1][1] and players[index+1][INITIAL_TC_ID] in x[1][1][UNIT_IDS]:
                                         document_action(DEQUEUE_EVENTS_AT_INITIAL_TC, None, ingame_time, players, player_id)
                             pass
                         if action == Action.GATHER_POINT.name:
@@ -185,7 +185,7 @@ def game_summary(game_id, data):
                             unit_id = x[1][1][UNIT_ID]
                             document_action(UNITS, unit_id, ingame_time, players, player_id)
                             if unit_id == ID_VILLAGER_MALE and not INITIAL_TC_ID in players[player_id]:
-                                players[player_id][INITIAL_TC_ID] = x[1][1]['object_ids'][0]
+                                players[player_id][INITIAL_TC_ID] = x[1][1][OBJECT_IDS][0]
                         if action == Action.RESEARCH.name:
                             player_id = x[1][1][PLAYER_ID]
                             technology_id = x[1][1][TECHNOLOGY_ID]
@@ -214,19 +214,19 @@ def document_action(type, event, time, data, player):
 
 def document_apm(ingame_time, data, player):
     current_minute = str(int(ingame_time / 1000 / 60))
-    data[player]['mean_apm'] += 1
-    if not current_minute in data[player]['apm_over_time']:
-        data[player]['apm_over_time'][current_minute] = 1
+    data[player][MEAN_APM] += 1
+    if not current_minute in data[player][APM_OVER_TIME]:
+        data[player][APM_OVER_TIME][current_minute] = 1
     else:
-        data[player]['apm_over_time'][current_minute] += 1
+        data[player][APM_OVER_TIME][current_minute] += 1
 
 def finalize_apm_calculation(players, ingame_time):
     for player in players:
         # Finish mean apm calculation by dividing through the game time 
-        players[player]['mean_apm'] = round(players[player]['mean_apm'] / (ingame_time / 1000) * 60)
+        players[player][MEAN_APM] = round(players[player][MEAN_APM] / (ingame_time / 1000) * 60)
 
         # Adapt APM from last minute
         last_minute = str(int(ingame_time / 1000 / 60))
-        if last_minute in players[player]['apm_over_time']:
+        if last_minute in players[player][APM_OVER_TIME]:
             seconds_in_last_minute = ingame_time / 1000 % 60
-            players[player]['apm_over_time'][last_minute] = round(players[player]['apm_over_time'][last_minute] / seconds_in_last_minute * 60)
+            players[player][APM_OVER_TIME][last_minute] = round(players[player][APM_OVER_TIME][last_minute] / seconds_in_last_minute * 60)
