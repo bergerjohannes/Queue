@@ -2,9 +2,8 @@ from constants import *
 from helper import *
 import zipfile
 import io
-from mgz import header, body, fast
+from mgz import header, fast
 from mgz.summary import Summary
-from mgz.model import parse_match
 import ast
 import knowledge
 
@@ -48,58 +47,6 @@ def game_summary(game_id, data):
                                       'mean_apm': 0}
 
         with zip_ref.open(file_name) as data:
-            match = parse_match(data)
-
-            lastActionTime = match.actions[-1].timestamp
-            gameDurationMinutes = int(lastActionTime.total_seconds() / 60)
-            gameDurationRemainingSeconds = int(lastActionTime.total_seconds() % 60)
-
-            nonRelevantActionsIds = [Action.AI_ORDER.name, Action.RESIGN.name, Action.SPECTATE.name, Action.SAVE.name, Action.HD_UNKNOWN_34.name, Action.DE_UNKNOWN_35.name, Action.DE_UNKNOWN_37.name, Action.DE_UNKNOWN_39.name, Action.DE_UNKNOWN_41.name, Action.DE_UNKNOWN_43.name, Action.AI_COMMAND.name, Action.DE_UNKNOWN_80.name, Action.GAME.name, Action.DE_UNKNOWN_109.name, Action.FLARE.name, Action.DE_UNKNOWN_130.name, Action.DE_UNKNOWN_131.name, Action.DE_UNKNOWN_135.name, Action.DE_UNKNOWN_138.name, Action.POSTGAME.name]
-            relevantGameActions = list(filter(lambda x: x.type.name not in nonRelevantActionsIds, match.actions))
-
-            actionsPlayer0 = list(
-                filter(lambda x: x.player == match.players[0], relevantGameActions))
-            actionsPlayer1 = list(
-                filter(lambda x: x.player == match.players[1], relevantGameActions))
-
-            apmOverTimePlayer0 = {}
-            apmOverTimePlayer1 = {}
-            apmMeanPlayer0 = 0
-            apmMeanPlayer1 = 0
-
-            for timeframe in range(gameDurationMinutes + 1):
-                apmPlayer0InGivenMinute = list(
-                    filter(lambda x: x.timestamp.total_seconds() / 60 >= timeframe and x.timestamp.total_seconds() / 60 < timeframe+1, actionsPlayer0))
-                apmPlayer1InGivenMinute = list(
-                    filter(lambda x: x.timestamp.total_seconds() / 60 >= timeframe and x.timestamp.total_seconds() / 60 < timeframe+1, actionsPlayer1))
-                if timeframe == gameDurationMinutes:
-                    calculatedAPMForLastMinutePlayer0 = round(
-                        len(apmPlayer0InGivenMinute) / gameDurationRemainingSeconds*60)
-                    calculatedAPMForLastMinutePlayer1 = round(
-                        len(apmPlayer1InGivenMinute) / gameDurationRemainingSeconds*60)
-
-                    apmOverTimePlayer0[timeframe] = calculatedAPMForLastMinutePlayer0
-                    apmOverTimePlayer1[timeframe] = calculatedAPMForLastMinutePlayer1
-                    apmMeanPlayer0 += calculatedAPMForLastMinutePlayer0
-                    apmMeanPlayer1 += calculatedAPMForLastMinutePlayer1
-                else:
-                    actualAPMForGivenMinutePlayer0 = len(apmPlayer0InGivenMinute)
-                    actualAPMForGivenMinutePlayer1 = len(apmPlayer1InGivenMinute)
-
-                    apmOverTimePlayer0[timeframe] = actualAPMForGivenMinutePlayer0
-                    apmOverTimePlayer1[timeframe] = actualAPMForGivenMinutePlayer1
-                    apmMeanPlayer0 += actualAPMForGivenMinutePlayer0
-                    apmMeanPlayer1 += actualAPMForGivenMinutePlayer1
-
-            apmMeanPlayer0 = round(apmMeanPlayer0/(gameDurationMinutes + 1))
-            apmMeanPlayer1 = round(apmMeanPlayer1/(gameDurationMinutes + 1))
-
-            players[1]['apm_over_time'] = apmOverTimePlayer0
-            players[1]['mean_apm'] = apmMeanPlayer0
-            players[2]['apm_over_time'] = apmOverTimePlayer1
-            players[2]['mean_apm'] = apmMeanPlayer1
-
-        with zip_ref.open(file_name) as data:
             header.parse_stream(data)
             fast.meta(data)
             ingame_time = 0
@@ -125,6 +72,14 @@ def game_summary(game_id, data):
                         pass
                     elif operation == Operation.ACTION.name:
                         action = str(x[1][0]).split('.')[1]
+
+                        # Try to document game effective actions
+                        nonRelevantActionsIds = [Action.AI_ORDER.name, Action.RESIGN.name, Action.SPECTATE.name, Action.SAVE.name, Action.HD_UNKNOWN_34.name, Action.DE_UNKNOWN_35.name, Action.DE_UNKNOWN_37.name, Action.DE_UNKNOWN_39.name, Action.DE_UNKNOWN_41.name, Action.DE_UNKNOWN_43.name, Action.AI_COMMAND.name, Action.DE_UNKNOWN_80.name, Action.GAME.name, Action.DE_UNKNOWN_109.name, Action.FLARE.name, Action.DE_UNKNOWN_130.name, Action.DE_UNKNOWN_131.name, Action.DE_UNKNOWN_135.name, Action.DE_UNKNOWN_138.name, Action.POSTGAME.name]
+                        if action not in nonRelevantActionsIds:
+                            if PLAYER_ID in x[1][1]: # Sadly, not every relevant action has the player id attached to it
+                                player_id = x[1][1][PLAYER_ID]
+                                document_apm(ingame_time, players, player_id)
+
                         if action == Action.SPECIAL.name:
                             if 'order_type' in x[1][1] and x[1][1]['order_type'] == SPECIAL_ORDER_TYPE_DEQUEUE:
                                 for index in range(len(players_data)):
@@ -253,3 +208,10 @@ def document_action(type, event, time, data, player):
         data[player][type][event] = events
     else:
         data[player][type][event] = [time]
+
+def document_apm(ingame_time, data, player):
+    current_minute = str(int(ingame_time / 1000 / 60))
+    if not current_minute in data[player]['apm_over_time']:
+        data[player]['apm_over_time'][current_minute] = 1
+    else:
+        data[player]['apm_over_time'][current_minute] += 1
