@@ -1,6 +1,10 @@
 from enum import Enum
 
 # General
+NO_AGE_UP = 'no_age_up'
+FEUDAL = 'feudal'
+CASTLE = 'castle'
+IMPERIAL = 'imperial'
 BUILDINGS = 'buildings'
 UNITS = 'units'
 RESEARCH = 'tech'
@@ -10,8 +14,6 @@ PLAYER_ID = 'player_id'
 BUILDING_ID = 'building_id'
 TECHNOLOGY_ID = 'technology_id'
 UNIT_ID = 'unit_id'
-DEQUEUE_EVENTS_AT_INITIAL_TC = 'dequeue_event_at_initial_TC'
-INITIAL_TC_ID = 'initial_TC_id'
 MEAN_APM = 'mean_apm'
 APM_OVER_TIME = 'apm_over_time'
 OBJECT_IDS = 'object_ids'
@@ -44,6 +46,7 @@ ID_FEUDAL_AGE = 101
 ID_CASTLE_AGE = 102
 ID_IMPERIAL_AGE = 103
 ID_MAN_AT_ARMS_UPGRADE = 222
+ID_FLETCHING = 199
 
 # Units
 ID_MILITA = 74

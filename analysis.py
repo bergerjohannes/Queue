@@ -39,8 +39,7 @@ def game_summary(game_id, game):
                                       BUILDINGS: {},
                                       RESEARCH: {},
                                       UNITS: {},
-                                      AGE_UP_TIMES: [],
-                                      DEQUEUE_EVENTS_AT_INITIAL_TC: [],
+                                      AGE_UP_TIMES: {},
                                       'number': players_data[index]['number'],
                                       'color': players_data[index]['color_id'],
                                       APM_OVER_TIME: {},
@@ -60,8 +59,9 @@ def game_summary(game_id, game):
                         message = ast.literal_eval(x[1].decode('UTF-8'))[MESSAGE_AGP]
                         for index in range(len(players)):
                             player = players[index + 1]
-                            if knowledge.chat_indicates_age_up(message, player['name']):
-                                players[index + 1][AGE_UP_TIMES].append(ingame_time)
+                            age_up = knowledge.chat_indicates_age_up(message, player['name'])
+                            if age_up is not NO_AGE_UP:
+                                players[index + 1][AGE_UP_TIMES][age_up] = ingame_time
                     elif operation == Operation.VIEWLOCK.name:
                         pass
                     elif operation == Operation.START.name:
@@ -82,10 +82,7 @@ def game_summary(game_id, game):
                                 document_apm(ingame_time, players, player_id)
 
                         if action == Action.SPECIAL.name:
-                            if ORDER_TYPE in action_data and action_data[ORDER_TYPE] == SPECIAL_ORDER_TYPE_DEQUEUE:
-                                for index in range(len(players_data)):
-                                    if  INITIAL_TC_ID in players[index+1] and players[index+1][INITIAL_TC_ID] == action_data[OBJECT_IDS][0]:
-                                        document_action(DEQUEUE_EVENTS_AT_INITIAL_TC, None, ingame_time, players, player_id)
+                            pass
                         elif action == Action.RESIGN.name:
                             player_id = action_data[PLAYER_ID]
                             players[player_id][RESIGNED] = ingame_time
@@ -96,10 +93,7 @@ def game_summary(game_id, game):
                         elif action == Action.DELETE.name:
                             pass
                         elif action == Action.ORDER.name:
-                            if BUILDING_ID in action_data and action_data[BUILDING_ID] == -1: # This is a dequeue event
-                                for index in range(len(players_data)):
-                                    if  INITIAL_TC_ID in players[index+1] and UNIT_IDS in action_data and players[index+1][INITIAL_TC_ID] in action_data[UNIT_IDS]:
-                                        document_action(DEQUEUE_EVENTS_AT_INITIAL_TC, None, ingame_time, players, player_id)
+                            pass
                         elif action == Action.GATHER_POINT.name:
                             pass
                         elif action == Action.BACK_TO_WORK.name:
@@ -184,8 +178,6 @@ def game_summary(game_id, game):
                             player_id = action_data[PLAYER_ID]
                             unit_id = action_data[UNIT_ID]
                             document_action(UNITS, unit_id, ingame_time, players, player_id)
-                            if unit_id == ID_VILLAGER_MALE and not INITIAL_TC_ID in players[player_id]:
-                                players[player_id][INITIAL_TC_ID] = action_data[OBJECT_IDS][0]
                         elif action == Action.RESEARCH.name:
                             player_id = action_data[PLAYER_ID]
                             technology_id = action_data[TECHNOLOGY_ID]
@@ -201,11 +193,7 @@ def game_summary(game_id, game):
     return info
 
 def document_action(type, event, time, data, player):
-    if event is None: # This is used for dequeue events where we don't know what was dequeued
-        events = data[player][type]
-        events.append(time)
-        data[player][type] = events
-    elif event in data[player][type]:
+    if event in data[player][type]:
         events = data[player][type][event]
         events.append(time)
         data[player][type][event] = events
