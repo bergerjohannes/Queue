@@ -1,9 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
-
 import files_service
 import analysis
-import interpretation
 
 app = Flask(__name__)
 CORS(app)
@@ -16,19 +14,35 @@ def test():
 @app.route('/analyze', methods = ['GET'])
 @cross_origin()
 def analyze():
-    profile_id = request.args.get('profile_id', None)
-    game_id = request.args.get('game_id', None)
+    profile_id = request.args.get('profileId', None)
+    game_id = request.args.get('gameId', None)
     if profile_id is None or game_id is None:
         return {'error': 'Missing parameters: profile id and/or game id.'}, 400
 
-    data = files_service.load_game_from_aoe2_net(game_id, profile_id)
+    data = files_service.load_game_from_microsofts_server(game_id, profile_id)
     if 'error' in data.keys():
         return {'error': data['error']}, 404
 
-    info = analysis.game_summary(game_id, data)
-    interpretation_result = interpretation.get_build_order(info['players'])
-    info['players'] = interpretation_result
+    info = analysis.analyze_game_from_microsofts_server(game_id, data)
     return info, 200
+
+@app.route('/batch-analyze', methods = ['GET'])
+@cross_origin()
+def batch_analyze():
+    path = request.args.get('path', None)
+    filter = request.args.get('filter', None)
+    if path is None:
+        return {'error': 'Missing parameter: path. Please provide a query parameter with the full path to the game files you want to analyze.'}, 400
+    
+    games = files_service.check_games_locally(path, None)
+
+    output = {}
+    for game in games:
+        full_path = path + game
+        info = analysis.analyze_game_from_local_path(full_path)
+        output[game] = info
+
+    return output, 200
 
 if __name__ == '__main__':
     # This is used when running locally only.
