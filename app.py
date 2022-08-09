@@ -10,7 +10,6 @@ CORS(app)
 @app.route('/', methods = ['GET'])
 @cross_origin()
 def test():
-    database_service.save_data_to_db()
     return {'status': 'Running'}, 200
 
 @app.route('/analyze', methods = ['GET'])
