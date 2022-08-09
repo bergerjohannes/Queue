@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS, cross_origin
 import files_service
 import analysis
+import database_service
 
 app = Flask(__name__)
 CORS(app)
@@ -9,6 +10,7 @@ CORS(app)
 @app.route('/', methods = ['GET'])
 @cross_origin()
 def test():
+    database_service.save_data_to_db()
     return {'status': 'Running'}, 200
 
 @app.route('/analyze', methods = ['GET'])
@@ -33,13 +35,15 @@ def batch_analyze():
     filter = request.args.get('filter', None)
     if path is None:
         return {'error': 'Missing parameter: path. Please provide a query parameter with the full path to the game files you want to analyze.'}, 400
-    
+
+    path = files_service.sanity_check_path_and_improve_if_needed(path)
     games = files_service.check_games_locally(path, None)
 
     output = {}
     for game in games:
         full_path = path + game
         info = analysis.analyze_game_from_local_path(full_path)
+        database_service.save_data_to_db(info, '000000') # ToDO: Change name
         output[game] = info
 
     return output, 200

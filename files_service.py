@@ -14,3 +14,9 @@ def load_game_from_microsofts_server(game_id, profile_id):
 def check_games_locally(path, filter):
     files = [f for f in listdir(path) if isfile(join(path, f)) and ".aoe2record" in f]
     return files
+
+def sanity_check_path_and_improve_if_needed(path):
+    path = path.replace('\\', '/')
+    if path[-1] != '/':
+        path += '/'
+    return path

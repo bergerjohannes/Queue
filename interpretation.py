@@ -11,24 +11,19 @@ def get_summary_data(summary):
     players = {}
     info = {}
     players_data = summary.get_players()
-    info['duration'] = get_readable_time_from_ingame_timestamp(
-        summary.get_duration())
+    info['rated'] = summary.get_platform()['rated']
+    info['game_type'] = summary.get_settings()['type'][1]
+    info['duration'] = get_readable_time_from_ingame_timestamp(summary.get_duration())
     info['map_name'] = summary.get_map()['name']
     info['map_size'] = summary.get_map()['size']
     info['number_of_players'] = len(players_data)
-    teams = []
-    for team in summary.get_teams():
-        team_data = []
-        for player in team:
-            team_data.append(player)
-            teams.append(team_data)
-    info['teams'] = teams
     for index in range(len(players_data)):
         players[index + 1] = {'name': players_data[index]['name'],
                               CIV: players_data[index][CIV],
                               'civilization_name': knowledge.get_name_for_civ(players_data[index][CIV]),
                               'winner': players_data[index]['winner'],
                               'user_id': players_data[index]['user_id'],
+                              'human': players_data[index]['human'],
                               BUILDINGS: {},
                               RESEARCH: {},
                               UNITS: {},
@@ -37,6 +32,13 @@ def get_summary_data(summary):
                               'color': knowledge.get_color(players_data[index]['color_id']),
                               APM_OVER_TIME: {},
                               MEAN_APM: 0}
+
+    team_number = 1
+    for team in summary.get_teams():
+        for player in team:
+            players[player]['team'] = team_number
+        team_number += 1
+
     info['players'] = players
     return info
 
@@ -77,7 +79,8 @@ def analyze_actions(info, data):
                 if action not in nonRelevantActionsIds:
                     if PLAYER_ID in action_data:  # Sadly, not every relevant action has the player id attached to it
                         player_id = action_data[PLAYER_ID]
-                        document_apm(ingame_time,  info['players'], player_id)
+                        if player_id in info['players']: # Check for human player
+                            document_apm(ingame_time,  info['players'], player_id)
                 if action == Action.SPECIAL.name:
                     pass
                 elif action == Action.RESIGN.name:
@@ -198,6 +201,13 @@ def get_times_for_first_and_second_creation_of(type, id, data):
                 second = data[type][id][1]
     return (first, second)
 
+def get_age_up_time_for_age(age_up_times, age):
+    new_age_reached_at = math.inf
+    if age in age_up_times:
+        new_age_reached_at = age_up_times[age]
+
+    return new_age_reached_at
+
 
 def get_time_for_research_of(id, data):
     # get last time it was researched in case it was cancelled before and clicked again
@@ -214,15 +224,20 @@ def get_build_order(players):
     for player_number in range(1, len(players) + 1):
         player = players[player_number]
         player_name = player['name']
+        team = player['team']
         number = player['number']
         color = player['color']
         player_civ_name = player['civilization_name']
         player_civ_id = player[CIV]
         player_id = player['user_id']
         winner = player['winner']
+        if winner == None:
+            winner = 'false'
         age_up_times = player[AGE_UP_TIMES]
         apm_over_time = player[APM_OVER_TIME]
         mean_apm = player[MEAN_APM]
+        human = player['human']
+        player_type = 'Human'
 
         first_house, second_house = get_times_for_first_and_second_creation_of(
             BUILDINGS, ID_HOUSE, player)
@@ -252,20 +267,11 @@ def get_build_order(players):
 
         feudal_age_clicked = get_time_for_research_of(ID_FEUDAL_AGE, player)
         castle_age_clicked = get_time_for_research_of(ID_CASTLE_AGE, player)
-        imperial_age_clicked = get_time_for_research_of(
-            ID_IMPERIAL_AGE, player)
+        imperial_age_clicked = get_time_for_research_of(ID_IMPERIAL_AGE, player)
 
-        feudal_reached = math.inf
-        if FEUDAL in age_up_times:
-            fefeudal_reachedudal = age_up_times[FEUDAL]
-
-        castle_reached = math.inf
-        if CASTLE in age_up_times:
-            castle_reached = age_up_times[CASTLE]
-
-        imperial_reached = math.inf
-        if IMPERIAL in age_up_times:
-            imperial_reached = age_up_times[IMPERIAL]
+        feudal_reached = get_age_up_time_for_age(age_up_times, FEUDAL)
+        castle_reached = get_age_up_time_for_age(age_up_times, CASTLE)
+        imperial_reached = get_age_up_time_for_age(age_up_times, IMPERIAL)
 
         first_militia, second_militia = get_times_for_first_and_second_creation_of(
             UNITS, ID_MILITA, player)
@@ -292,7 +298,7 @@ def get_build_order(players):
         build = ''
 
 # DRUSH
-        build = check_for_dark_age_action(first_barracks, second_house, feudal_age_clicked, castle_age_clicked, first_mill, first_militia, man_at_arms_upgrade, player_civ_id, age_up_times[FEUDAL])
+        build = check_for_dark_age_action(first_barracks, second_house, feudal_age_clicked, castle_age_clicked, first_mill, first_militia, man_at_arms_upgrade, player_civ_id, feudal_reached)
 
 # FEUDAL
         action_feudal_age = check_for_feudal_age_action(first_tower, second_tc, castle_age_clicked, player[CIV], first_stable, first_range, first_market, first_militia, first_scout, first_archer, first_skirm, man_at_arms_upgrade, first_blacksmith, second_barracks, second_eagle)
@@ -320,8 +326,17 @@ def get_build_order(players):
                 else:
                     build = action_imperial_age
 
-        game_analysis[player_number] = {'name': player_name, 'id': player_id, 'number': number, 'color': color, 'winner': winner, 'civ': player_civ_name, 'build': build, AGE_UP_TIMES: {}, 'apm_over_time': apm_over_time, 'mean_apm': mean_apm}
+        if build == '':
+            build = 'Unknown'
 
+        game_analysis[player_number] = {'type': player_type, 'name': player_name, 'team': team, 'id': player_id, 'number': number, 'color': color, 'winner': winner, 'civ': player_civ_name, 'build': build, AGE_UP_TIMES: {}, 'apm_over_time': apm_over_time, 'mean_apm': mean_apm}
+        if human == False:
+            del game_analysis[player_number]['name']
+            del game_analysis[player_number]['id']
+            del game_analysis[player_number]['apm_over_time']
+            del game_analysis[player_number]['mean_apm']
+            game_analysis[player_number]['type'] = 'AI'
+            
         if FEUDAL in age_up_times:
             game_analysis[player_number][AGE_UP_TIMES][FEUDAL] = get_readable_time_from_ingame_timestamp(age_up_times[FEUDAL])
         if CASTLE in age_up_times:
