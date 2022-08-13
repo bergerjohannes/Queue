@@ -12,6 +12,7 @@ def get_summary_data(summary):
     info = {}
     players_data = summary.get_players()
     info['rated'] = summary.get_platform()['rated']
+    info['game_id'] = summary.get_platform()['platform_match_id']
     info['game_type'] = summary.get_settings()['type'][1]
     info['duration'] = get_readable_time_from_ingame_timestamp(summary.get_duration())
     info['map_name'] = summary.get_map()['name']
@@ -53,8 +54,7 @@ def analyze_actions(info, data):
             if operation == Operation.SYNC.name:
                 ingame_time += x[1][0]
             elif operation == Operation.CHAT.name:
-                message = ast.literal_eval(
-                    x[1].decode('UTF-8'))[MESSAGE_AGP]
+                message = ast.literal_eval(x[1].decode('UTF-8'))[MESSAGE_AGP]
                 for index in range(len(info['players'])):
                     player = info['players'][index + 1]
                     age_up = knowledge.chat_indicates_age_up(
