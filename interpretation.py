@@ -11,8 +11,9 @@ def get_summary_data(summary):
     players = {}
     info = {}
     players_data = summary.get_players()
-    info['rated'] = summary.get_platform()['rated']
     info['game_id'] = summary.get_platform()['platform_match_id']
+    if summary.get_played() != None:
+        info['played_at_time'] = int(summary.get_played())
     info['game_type'] = summary.get_settings()['type'][1]
     info['duration'] = get_readable_time_from_ingame_timestamp(summary.get_duration())
     info['map_name'] = summary.get_map()['name']
