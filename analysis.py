@@ -4,11 +4,14 @@ import zipfile
 import io
 from mgz.summary import Summary
 import interpretation
+import aoe2net_info_service
 
 def analyze_game_from_microsofts_server(game_id, game):
 
     game_data = game['data']
     file_name = 'AgeIIDE_Replay_' + game_id + '.aoe2record'
+
+    print('Start analyzing downloaded game: ' + file_name)
 
     info = {}
 
@@ -21,9 +24,12 @@ def analyze_game_from_microsofts_server(game_id, game):
             info = interpretation.analyze_actions(info, data)
             interpretation_result = interpretation.get_build_order(info['players'])
             info['players'] = interpretation_result
-            return info
+        
+        aoe2net_info_service.get_additional_meta_info_for_aoe2net(info)
+        return info
 
 def analyze_game_from_local_path(path):
+    print('Start analyzing game at location: ' + path)
 
     info = {}
 
@@ -35,4 +41,6 @@ def analyze_game_from_local_path(path):
         info = interpretation.analyze_actions(info, data)
         interpretation_result = interpretation.get_build_order(info['players'])
         info['players'] = interpretation_result
-        return info
+
+    aoe2net_info_service.get_additional_meta_info_for_aoe2net(info)
+    return info

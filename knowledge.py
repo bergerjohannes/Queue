@@ -11,6 +11,10 @@ def get_color(index):
         colors = ['Blue', 'Red', 'Green', 'Yellow', 'Cyan', 'Pink', 'Grey', 'Orange']
         return colors[index]
 
+def get_leaderboard(index):
+        leaderboards = ['Unranked', '1v1 Deathmatch', 'Team Deathmatch', '1v1 Random Map', 'Team Random Map', '1v1 Empire Wars', 'Team Empire Wars']
+        return leaderboards[index]
+
 # Supporting all localizations that are available as of September 2021: BR, DE, EN ES, FR, HI, IT, JP, KO, MS, MX, PL, RU, TR, TW, VI, ZH
 def chat_indicates_age_up(message, player_name):
         age_up_chat_texts_feudal_age = [" avançou para a Idade Feudal.", 
