@@ -10,13 +10,11 @@ def get_additional_meta_info_for_aoe2net(info):
     try:
         additional_info = json.loads(r.content.decode())
     except:
-        print("Can't decode additional info from aoe2.net.")
+        pass # Can't decode additional info from aoe2.net -> most likely an empty response or an error
 
     if 'started' in additional_info:
-        print(additional_info['started'])
         info['played_at_time'] = int(additional_info['started'])
     if 'started' in additional_info:
-        print(additional_info['leaderboard_id'])
         info['ranked_game_type'] = knowledge.get_leaderboard(additional_info['leaderboard_id'])
     else:
         info['ranked_game_type'] = 'Unknown' # ToDo: Add 'Unranked' if AI was included
