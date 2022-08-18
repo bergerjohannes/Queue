@@ -9,7 +9,7 @@ With Queue, you can analyze games from Age of Empires II DE. The API returns a J
 5. Access app through `http://127.0.0.1:8080/`
 
 ## API
-To analyze a game, call the `analyze` endpoint with the query parameters `profile_id` and `game_id`.
+To analyze a game, call the `analyze` endpoint with the query parameters `profileId` and `gameId`.
 Games can only be analyzed when they are available through `https://aoe.ms`
 
 ## Game parser
