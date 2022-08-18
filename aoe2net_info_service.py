@@ -14,7 +14,7 @@ def get_additional_meta_info_for_aoe2net(info):
 
     if 'started' in additional_info:
         print(additional_info['started'])
-        info['started_at_time'] = int(additional_info['started'])
+        info['played_at_time'] = int(additional_info['started'])
     if 'started' in additional_info:
         print(additional_info['leaderboard_id'])
         info['ranked_game_type'] = knowledge.get_leaderboard(additional_info['leaderboard_id'])
