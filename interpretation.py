@@ -55,11 +55,14 @@ def analyze_actions(info, data):
             if operation == Operation.SYNC.name:
                 ingame_time += x[1][0]
             elif operation == Operation.CHAT.name:
-                message = ast.literal_eval(x[1].decode('UTF-8'))[MESSAGE_AGP]
+                message = x[1].decode('UTF-8')
+                try:
+                    message = ast.literal_eval(message)[MESSAGE_AGP] # Try to get the actual message out of the dictonary
+                except SyntaxError:
+                    pass # If we don't have additional info such as player, channel, message, tauntNumber, messageAGP -> we get the message directly
                 for index in range(len(info['players'])):
                     player = info['players'][index + 1]
-                    age_up = knowledge.chat_indicates_age_up(
-                        message, player['name'])
+                    age_up = knowledge.chat_indicates_age_up(message, player['name'])
                     if age_up is not NO_AGE_UP:
                         info['players'][index + 1][AGE_UP_TIMES][age_up] = ingame_time
             elif operation == Operation.VIEWLOCK.name:
