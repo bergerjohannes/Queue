@@ -17,6 +17,13 @@ def get_summary_data(summary):
     info['game_type'] = summary.get_settings()['type'][1]
     info['duration'] = get_readable_time_from_ingame_timestamp(summary.get_duration())
     info['map_name'] = summary.get_map()['name']
+    tcs_at_start = summary.get_objects()['tcs']
+    if tcs_at_start == None:
+        info['map_tc_start_type'] = 'Nomad'
+    elif tcs_at_start > 1:
+        info['map_tc_start_type'] = 'Multiple TCs'
+    else:
+        info['map_tc_start_type'] = 'Standard'
     info['map_size'] = summary.get_map()['size']
     info['number_of_players'] = len(players_data)
     for index in range(len(players_data)):
