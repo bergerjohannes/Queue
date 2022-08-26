@@ -14,10 +14,14 @@ def get_additional_meta_info_for_aoe2net(info):
 
     if 'started' in additional_info:
         info['played_at_time'] = int(additional_info['started'])
-    if 'started' in additional_info:
+    if 'leaderboard_id' in additional_info:
         info['ranked_game_type'] = knowledge.get_leaderboard(additional_info['leaderboard_id'])
     else:
-        info['ranked_game_type'] = 'Unknown' # ToDo: Add 'Unranked' if AI was included
+        game_with_ai = len({key: value for (key, value) in info['players'].items() if value['type'] == 'AI' }) > 0
+        if game_with_ai == True:
+            info['ranked_game_type'] = knowledge.get_leaderboard(0) # If AI is present -> unranked
+        else:
+            info['ranked_game_type'] = 'Unknown'
     if 'players' in additional_info:
         for player in info['players']:
             player_id = info['players'][player]['id']
