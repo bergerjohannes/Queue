@@ -2,7 +2,7 @@ import requests
 import json
 import knowledge
 
-def get_additional_meta_info_for_aoe2net(info):
+def get_additional_meta_info_from_aoe2net(info):
     game_id = info['game_id']
     url = 'https://aoe2.net/api/match?uuid=' + game_id
     r = requests.get(url)

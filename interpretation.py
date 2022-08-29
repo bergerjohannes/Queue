@@ -5,7 +5,7 @@ import math
 import knowledge
 from mgz import header, fast
 import ast
-
+import helper
 
 def get_summary_data(summary):
     players = {}
@@ -347,7 +347,7 @@ def get_build_order(players):
             del game_analysis[player_number]['apm_over_time']
             del game_analysis[player_number]['mean_apm']
             game_analysis[player_number]['type'] = 'AI'
-            
+
         if FEUDAL in age_up_times:
             game_analysis[player_number][AGE_UP_TIMES][FEUDAL] = get_readable_time_from_ingame_timestamp(age_up_times[FEUDAL])
         if CASTLE in age_up_times:
@@ -478,3 +478,12 @@ def finalize_apm_calculation(players, ingame_time):
             seconds_in_last_minute = ingame_time / 1000 % 60
             players[player][APM_OVER_TIME][last_minute] = round(
                 players[player][APM_OVER_TIME][last_minute] / seconds_in_last_minute * 60)
+
+def guess_playing_time(file_name):
+    # The typical name for a game file looks something like this
+    # MP Replay v101.101.39515.0 @2020.08.23 145114 (2).aoe2record
+    try:
+        date_string = file_name.split('@')[1].split()[0]
+        return helper.get_timestamp_for_date_string(date_string)
+    except:
+        pass

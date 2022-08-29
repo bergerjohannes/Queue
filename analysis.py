@@ -25,7 +25,7 @@ def analyze_game_from_microsofts_server(game_id, game):
             interpretation_result = interpretation.get_build_order(info['players'])
             info['players'] = interpretation_result
         
-        aoe2net_info_service.get_additional_meta_info_for_aoe2net(info)
+        aoe2net_info_service.get_additional_meta_info_from_aoe2net(info)
         return info
 
 def analyze_game_from_local_path(path):
@@ -42,5 +42,12 @@ def analyze_game_from_local_path(path):
         interpretation_result = interpretation.get_build_order(info['players'])
         info['players'] = interpretation_result
 
-    aoe2net_info_service.get_additional_meta_info_for_aoe2net(info)
+    aoe2net_info_service.get_additional_meta_info_from_aoe2net(info)
+    if info.get('played_at_time') == None:
+        try_to_get_start_date_from_game_file_name(path, info)
     return info
+
+def try_to_get_start_date_from_game_file_name(path, info):
+    result = interpretation.guess_playing_time(path)
+    if result != None:
+        info['played_at_time'] = result
