@@ -42,7 +42,7 @@ def batch_analyze():
     for game in games:
         full_path = path + game
         info = analysis.analyze_game_from_local_path(full_path)
-        database_service.save_data_to_db(info, '000000') # ToDO: Change name
+        database_service.save_game_info_to_db(info)
         output[game] = info
 
     return output, 200

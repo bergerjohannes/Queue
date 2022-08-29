@@ -7,8 +7,8 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-def save_data_to_db(data, game_name):
-    data = json.loads(json.dumps(data))
+def save_game_info_to_db(data):
+    data_json = json.loads(json.dumps(data))
 
-    doc_ref = db.collection(u'matches').document(u'nOuk4lquYrXt4H2xafiZpPUFvN82').collection('data').document(game_name)
-    doc_ref.set(data)
+    doc_ref = db.collection(u'matches').document(u'nOuk4lquYrXt4H2xafiZpPUFvN82').collection(u'matches-data').document(data['game_id'])
+    doc_ref.set(data_json)
