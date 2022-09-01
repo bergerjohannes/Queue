@@ -1,4 +1,4 @@
 Flask==2.0.1
 flask-cors==3.0.10
-mgz==1.7.7
+mgz==1.7.10
 firebase_admin==5.2.0
