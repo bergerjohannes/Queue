@@ -422,15 +422,15 @@ def check_for_castle_age_action(first_blacksmith, castle_age_clicked, first_stab
     build = ''
 
     if first_blacksmith < castle_age_clicked and first_stable < castle_age_clicked and first_camel < first_archer and first_camel < first_knight and first_camel < first_elephant:
-        build += 'Fast Camels'
+        build += 'FC → Camels'
     elif first_blacksmith < castle_age_clicked and first_stable < castle_age_clicked and first_elephant < first_archer and first_elephant < first_knight and first_elephant < first_camel:
-        build += 'Fast Elephants'
+        build += 'FC → Elephants'
     elif first_blacksmith < castle_age_clicked and first_stable < castle_age_clicked and first_knight < first_archer and first_knight < first_elephant and first_knight < first_camel:
-        build += 'Fast Knights'
+        build += 'FC → Knights'
     elif first_blacksmith < castle_age_clicked and first_range < castle_age_clicked and first_archer < first_knight and first_archer > castle_age_clicked:
-        build += 'Fast Crossbows'
+        build += 'FC → Crossbows'
     elif first_market < castle_age_clicked and first_blacksmith < castle_age_clicked and first_stable > castle_age_clicked and first_range > castle_age_clicked:
-        build += 'Fast Castle'
+        build += 'FC'
         if first_castle < second_tc:
             build += ' → Unique Unit'
         if second_tc < first_knight and second_tc < first_archer and third_tc < first_knight and third_tc < first_archer:
