@@ -17,6 +17,8 @@ def get_summary_data(summary):
     info['game_type'] = summary.get_settings()['type'][1]
     info['duration'] = summary.get_duration()
     info['map_name'] = summary.get_map()['name']
+    info['map_start_with_palisade_walls'] = summary.get_objects()['palisade_walls']
+    info['map_start_with_stone_walls'] = summary.get_objects()['stone_walls']
     tcs_at_start = summary.get_objects()['tcs']
     if tcs_at_start == None:
         info['map_tc_start_type'] = 'Nomad'
