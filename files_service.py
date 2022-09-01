@@ -1,6 +1,7 @@
 import requests
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, getmtime
+import helper
 
 def load_game_from_microsofts_server(game_id, profile_id):
     url = 'https://aoe.ms/replay/?gameId=' + game_id + '&profileId=' + profile_id
@@ -20,3 +21,6 @@ def sanity_check_path_and_improve_if_needed(path):
     if path[-1] != '/':
         path += '/'
     return path
+
+def guess_playing_time_from_file(path):
+    return getmtime(path)

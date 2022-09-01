@@ -5,6 +5,7 @@ import io
 from mgz.summary import Summary
 import interpretation
 import aoe2net_info_service
+import files_service
 
 def analyze_game_from_microsofts_server(game_id, game):
 
@@ -37,17 +38,14 @@ def analyze_game_from_local_path(path):
         s = Summary(data)
         info = interpretation.get_summary_data(s)
 
+        if 'played_at_time' not in info:
+            info['played_at_time'] = int(files_service.guess_playing_time_from_file(path) - info['duration'] / 1000) # /1000 because the duration is in miliseconds
+        info['duration'] = get_readable_time_from_ingame_timestamp(info['duration'])
+
     with open(path, 'rb') as data:
         info = interpretation.analyze_actions(info, data)
         interpretation_result = interpretation.get_build_order(info['players'])
         info['players'] = interpretation_result
 
     aoe2net_info_service.get_additional_meta_info_from_aoe2net(info)
-    if info.get('played_at_time') == None:
-        try_to_get_start_date_from_game_file_name(path, info)
     return info
-
-def try_to_get_start_date_from_game_file_name(path, info):
-    result = interpretation.guess_playing_time(path)
-    if result != None:
-        info['played_at_time'] = result

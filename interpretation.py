@@ -15,7 +15,7 @@ def get_summary_data(summary):
     if summary.get_played() != None:
         info['played_at_time'] = int(summary.get_played())
     info['game_type'] = summary.get_settings()['type'][1]
-    info['duration'] = get_readable_time_from_ingame_timestamp(summary.get_duration())
+    info['duration'] = summary.get_duration()
     info['map_name'] = summary.get_map()['name']
     tcs_at_start = summary.get_objects()['tcs']
     if tcs_at_start == None:
@@ -478,10 +478,3 @@ def finalize_apm_calculation(players, ingame_time):
             seconds_in_last_minute = ingame_time / 1000 % 60
             players[player][APM_OVER_TIME][last_minute] = round(
                 players[player][APM_OVER_TIME][last_minute] / seconds_in_last_minute * 60)
-
-def guess_playing_time(file_name):
-    try:
-        date_string = helper.get_date_string_from_file_name(file_name)
-        return helper.get_timestamp_for_date_string(date_string)
-    except:
-        pass
