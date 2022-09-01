@@ -480,10 +480,8 @@ def finalize_apm_calculation(players, ingame_time):
                 players[player][APM_OVER_TIME][last_minute] / seconds_in_last_minute * 60)
 
 def guess_playing_time(file_name):
-    # The typical name for a game file looks something like this
-    # MP Replay v101.101.39515.0 @2020.08.23 145114 (2).aoe2record
     try:
-        date_string = file_name.split('@')[1].split()[0]
+        date_string = helper.get_date_string_from_file_name(file_name)
         return helper.get_timestamp_for_date_string(date_string)
     except:
         pass
