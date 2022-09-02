@@ -357,6 +357,12 @@ def get_build_order(players):
         if IMPERIAL in age_up_times:
             game_analysis[player_number][AGE_UP_TIMES][IMPERIAL] = get_seconds_time_from_ingame_timestamp(age_up_times[IMPERIAL])
 
+    # Make the player ids the keys of the player dictionary
+    for x in range(8):
+        if x+1 in game_analysis:
+            game_analysis[game_analysis[x+1]['id']] = game_analysis[x+1]
+            del game_analysis[x+1]
+
     return game_analysis
 
 
