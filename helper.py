@@ -1,6 +1,9 @@
 import datetime
 import time
 
+def get_seconds_time_from_ingame_timestamp(ingame_time):
+    return int(ingame_time/1000)
+
 def get_readable_time_from_ingame_timestamp(ingame_time):
     return str(datetime.timedelta(milliseconds=ingame_time)).split('.')[0]
 

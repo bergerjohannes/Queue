@@ -314,7 +314,7 @@ def get_build_order(players):
         build = check_for_dark_age_action(first_barracks, second_house, feudal_age_clicked, castle_age_clicked, first_mill, first_militia, man_at_arms_upgrade, player_civ_id, feudal_reached)
 
 # FEUDAL
-        action_feudal_age = check_for_feudal_age_action(first_tower, second_tc, castle_age_clicked, player[CIV], first_stable, first_range, first_market, first_militia, first_scout, first_archer, first_skirm, man_at_arms_upgrade, first_blacksmith, second_barracks, second_eagle)
+        action_feudal_age = check_for_feudal_age_action(first_tower, second_tc, feudal_age_clicked, castle_age_clicked, player[CIV], first_stable, first_range, first_market, first_militia, first_scout, first_archer, first_skirm, man_at_arms_upgrade, first_blacksmith, second_barracks, second_eagle)
         if action_feudal_age is not '':
             if build is not '':
                 build += ' → ' + action_feudal_age
@@ -351,11 +351,11 @@ def get_build_order(players):
             game_analysis[player_number]['type'] = 'AI'
 
         if FEUDAL in age_up_times:
-            game_analysis[player_number][AGE_UP_TIMES][FEUDAL] = get_readable_time_from_ingame_timestamp(age_up_times[FEUDAL])
+            game_analysis[player_number][AGE_UP_TIMES][FEUDAL] = get_seconds_time_from_ingame_timestamp(age_up_times[FEUDAL])
         if CASTLE in age_up_times:
-            game_analysis[player_number][AGE_UP_TIMES][CASTLE] = get_readable_time_from_ingame_timestamp(age_up_times[CASTLE])
+            game_analysis[player_number][AGE_UP_TIMES][CASTLE] = get_seconds_time_from_ingame_timestamp(age_up_times[CASTLE])
         if IMPERIAL in age_up_times:
-            game_analysis[player_number][AGE_UP_TIMES][IMPERIAL] = get_readable_time_from_ingame_timestamp(age_up_times[IMPERIAL])
+            game_analysis[player_number][AGE_UP_TIMES][IMPERIAL] = get_seconds_time_from_ingame_timestamp(age_up_times[IMPERIAL])
 
     return game_analysis
 
@@ -385,14 +385,14 @@ def check_for_dark_age_action(first_barracks, second_house, feudal_age_clicked, 
     return build
 
 
-def check_for_feudal_age_action(first_tower, second_tc, castle_age_clicked, civ, first_stable, first_range, first_market, first_militia, first_scout, first_archer, first_skirm, man_at_arms_upgrade, first_blacksmith, second_barracks, second_eagle):
+def check_for_feudal_age_action(first_tower, second_tc, feudal_age_clicked, castle_age_clicked, civ, first_stable, first_range, first_market, first_militia, first_scout, first_archer, first_skirm, man_at_arms_upgrade, first_blacksmith, second_barracks, second_eagle):
     build = ''
 
     if first_tower < first_range and first_tower < first_stable and first_tower < first_market:
         build += 'Towers'
     elif second_tc < castle_age_clicked and civ == 8:  # Persians
         build += 'Douche'
-    elif second_tc < castle_age_clicked and civ == 34:  # Cumans
+    elif second_tc < castle_age_clicked and civ == 34 and second_tc > feudal_age_clicked:  # Cumans
         build += 'Feudal Boom'
     elif first_stable < first_range and first_stable < first_market and first_stable < first_blacksmith and first_scout < first_archer and first_scout < man_at_arms_upgrade and first_scout < castle_age_clicked:
         build += 'Scouts'
