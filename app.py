@@ -41,9 +41,12 @@ def batch_analyze():
     output = {}
     for game in games:
         full_path = path + game
-        info = analysis.analyze_game_from_local_path(full_path)
-        database_service.save_game_info_to_db(info)
-        output[game] = info
+        try:
+            info = analysis.analyze_game_from_local_path(full_path)
+            database_service.save_game_info_to_db(info)
+            output[game] = info
+        except:
+            output[game] = {'error': 'Error analyzing game file.'}
 
     return output, 200
 
