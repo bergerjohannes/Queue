@@ -4,9 +4,6 @@ import time
 def get_seconds_time_from_ingame_timestamp(ingame_time):
     return int(ingame_time/1000)
 
-def get_readable_time_from_ingame_timestamp(ingame_time):
-    return str(datetime.timedelta(milliseconds=ingame_time)).split('.')[0]
-
 def get_date_string_from_file_name(file_name):
     # The typical name for a game file looks something like this
     # MP Replay v101.101.39515.0 @2020.08.23 145114 (2).aoe2record

@@ -15,7 +15,7 @@ def get_summary_data(summary):
     if summary.get_played() != None:
         info['played_at_time'] = int(summary.get_played())
     info['game_type'] = summary.get_settings()['type'][1]
-    info['duration'] = summary.get_duration()
+    info['duration'] = int(summary.get_duration())
     info['map_name'] = summary.get_map()['name']
     info['map_start_with_palisade_walls'] = summary.get_objects()['palisade_walls']
     info['map_start_with_stone_walls'] = summary.get_objects()['stone_walls']

@@ -40,7 +40,6 @@ def analyze_game_from_local_path(path):
 
         if 'played_at_time' not in info:
             info['played_at_time'] = int(files_service.guess_playing_time_from_file(path) - info['duration'] / 1000) # /1000 because the duration is in miliseconds
-        info['duration'] = get_readable_time_from_ingame_timestamp(info['duration'])
 
     with open(path, 'rb') as data:
         info = interpretation.analyze_actions(info, data)
