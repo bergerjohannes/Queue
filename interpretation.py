@@ -358,9 +358,14 @@ def get_build_order(players):
             game_analysis[player_number][AGE_UP_TIMES][IMPERIAL] = get_seconds_time_from_ingame_timestamp(age_up_times[IMPERIAL])
 
     # Make the player ids the keys of the player dictionary
+    ai_counter = 1
     for x in range(8):
         if x+1 in game_analysis:
-            game_analysis[game_analysis[x+1]['id']] = game_analysis[x+1]
+            if 'id' in game_analysis[x+1]:
+                game_analysis[game_analysis[x+1]['id']] = game_analysis[x+1]
+            else:
+                game_analysis[ai_counter] = game_analysis[x+1]
+                ai_counter += 1
             del game_analysis[x+1]
 
     return game_analysis
@@ -396,7 +401,7 @@ def check_for_feudal_age_action(first_tower, second_tc, feudal_age_clicked, cast
 
     if first_tower < first_range and first_tower < first_stable and first_tower < first_market:
         build += 'Towers'
-    elif second_tc < castle_age_clicked and civ == 8:  # Persians
+    elif second_tc < castle_age_clicked and civ == 8:  # Persians TODO: check for Nomad map!
         build += 'Douche'
     elif second_tc < castle_age_clicked and civ == 34 and second_tc > feudal_age_clicked:  # Cumans
         build += 'Feudal Boom'
