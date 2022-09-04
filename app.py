@@ -25,6 +25,7 @@ def analyze():
         return {'error': data['error']}, 404
 
     info = analysis.analyze_game_from_microsofts_server(game_id, data)
+    database_service.save_game_info_to_db(info)
     return info, 200
 
 @app.route('/batch-analyze', methods = ['GET'])
