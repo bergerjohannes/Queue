@@ -8,6 +8,9 @@ With Queue, you can analyze games from Age of Empires II DE. The API returns a J
 4. Run app with the command `python3 app.py`
 5. Access app through `http://127.0.0.1:8080/`
 
+## Deployment to Google Cloud App Engine
+Deploy with `gcloud app deploy app.yaml` after authenticating
+
 ## API
 To analyze a game, call the `analyze` endpoint with the query parameters `profileId` and `gameId`.
 Games can only be analyzed when they are available through `https://aoe.ms`
